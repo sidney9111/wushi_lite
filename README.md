@@ -21,7 +21,7 @@ The controller demo from Wushi2 <https://itunes.apple.com/cn/app/id392486160> is
 
 ### Joystick
 
-![abc]()
+![abc](https://github.com/sidney9111/wushi_lite/blob/master/Act/controls.jpg)
 
 [id]: http://25.io/mou/ "Markdown editor on Mac OS X"
 
