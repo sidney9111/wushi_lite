@@ -21,8 +21,15 @@ public class JoystickButton : MonoBehaviour, IPointerDownHandler,IPointerClickHa
 	/// </summary>
 	public String keySrc;
 	public String keyDefine;
-
-
+	private bool _enabled = true;
+	public bool enabled{
+		get{
+			return _enabled;
+		}
+		set{
+			_enabled = value;
+		}
+	}
 
 	void Start () {
 		keyHandler += OnKey;
@@ -42,6 +49,16 @@ public class JoystickButton : MonoBehaviour, IPointerDownHandler,IPointerClickHa
 	public void updateText(){
 		Text t = gameObject.transform.GetComponentInChildren<Text>();
 		t.text = this.keyDefine;
+	}
+	public String Text{
+		get{
+			Text t = gameObject.transform.GetComponentInChildren<Text>();
+			return t.text;
+		}
+		set {
+			Text t = gameObject.transform.GetComponentInChildren<Text>();
+			t.text = value; 
+		}
 	}
 	public void OnKey(object sender, EventArgs e){
 		//print ("onkey tick");
@@ -73,7 +90,7 @@ public class JoystickButton : MonoBehaviour, IPointerDownHandler,IPointerClickHa
 		//		img.color = Color.grey;
 		this.selected();
 
-		if (keyHandler != null) {
+		if (keyHandler != null && _enabled == true) {
 			KeyEventArgs args = new KeyEventArgs ();
 			//be sure to mark different name by editor
 			//or it will be used as identifier on later keydown events

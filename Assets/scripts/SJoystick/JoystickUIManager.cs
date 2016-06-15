@@ -76,6 +76,34 @@ public class JoystickUIManager : MonoBehaviour {
 		Debug.Log ("jsm start event");
 		StartCoroutine(CheckForControllers());
 
+		//如果判断到蓝牙手柄，上下左右，将不可被修改
+		if (Input.GetJoystickNames ().Length > 0) {
+			for (int i = 0; i < gameObject.transform.childCount; i++) {
+				Transform t = gameObject.transform.GetChild (i);	
+				JoystickButton script = t.GetComponent<JoystickButton> ();
+				if (script != null) {
+					if(script.keySrc=="A" || script.keySrc=="W" || script.keySrc=="D" || script.keySrc=="S"){
+						script.enabled = false;
+					}
+					if(script.keySrc=="A"){
+						script.Text = "<";
+						script.keyDefine = "<||left";
+					}else if(script.keySrc=="W"){
+						script.Text = "^";
+						script.keyDefine = "<||up";
+					}else if(script.keySrc=="D"){
+						script.Text = ">";
+						script.keyDefine = "<||right";
+					}
+					else if(script.keySrc=="S"){
+						script.Text=",";
+						script.keySrc=",||down";
+					};
+				}
+			}
+		}
+
+
 	}
 
 	private bool connected = false;
@@ -212,6 +240,8 @@ public class JoystickUIManager : MonoBehaviour {
 				print("contain curr" + curr);
 				print ("Input string = "+Input.inputString);
 				//lst [curr] = Input.inputString.ToUpper ();
+				//如果
+
 				lst[curr] = this.pressedString.ToUpper();
 			} else {
 				print("contain curr not" + curr);
@@ -227,29 +257,41 @@ public class JoystickUIManager : MonoBehaviour {
 			//if(Input.GetKeyDown(KeyCode
 
 			if (Input.GetKeyDown (KeyCode.Joystick8Button0)) {
-				print("joystick manager press a");
-				return "A";
+				print("joystick manager press 8a");
+				return "A|Joystick8Button0";
 			} else if (Input.GetKeyDown (KeyCode.Joystick8Button1)) {
-				print("joystick manager press b");
-				return "B";
+				print("joystick manager press 8b");
+				return "B|Joystick8Button1";
 			} else if (Input.GetKeyDown (KeyCode.Joystick8Button2)) {
-				print("joystick manager press x");
-				return "X";
+				print("joystick manager press 8x");
+				return "X|Joystick8Button2";
 			} else if (Input.GetKeyDown (KeyCode.Joystick8Button3)) {
-				print("joystick manager press y");
-				return "Y";
+				print("joystick manager press 8y");
+				return "Y|Joystick8Button3";
 			} else if (Input.GetKeyDown (KeyCode.JoystickButton0)) {
 				print("joystick manager press a");
-				return "A";
+				return "A|JoystickButton0";
 			} else if (Input.GetKeyDown (KeyCode.JoystickButton1)) {
 				print("joystick manager press b");
-				return "B";
+				return "B|JoystickButton1";
 			} else if (Input.GetKeyDown (KeyCode.JoystickButton2)) {
 				print("joystick manager press x");
-				return "X";
+				return "X|JoystickButton2";
 			} else if (Input.GetKeyDown (KeyCode.JoystickButton3)) {
 				print("joystick manager press y");
-				return "Y";
+				return "Y|JoystickButton3";
+			} else if(Input.GetKeyDown(KeyCode.JoystickButton5)){
+				return "LT|JoystickButton4";
+			
+			} else if(Input.GetKeyDown(KeyCode.JoystickButton6)){
+				return "RT|JoystickButton5";
+				
+			} else if(Input.GetKeyDown(KeyCode.JoystickButton7)){
+				return "LB|JoystickButton7";
+				
+			} else if(Input.GetKeyDown(KeyCode.JoystickButton8)){
+				return "RB|JoystickButton8";
+				
 			} else {
 
 
@@ -257,7 +299,8 @@ public class JoystickUIManager : MonoBehaviour {
 				//					//print("joystick manager press null");	
 				//				}else{
 				//					print("joystick manager press string " + Input.inputString);
-				return Input.inputString;	
+				return Input.inputString;
+
 				//				}
 
 			}
@@ -353,6 +396,7 @@ public class JoystickUIManager : MonoBehaviour {
 
 		}
 	}
+	//如果button enabled，这里将不会有返回
 	public void OnCustomerKeySelected(object sender,JoystickButton.KeyEventArgs e){
 		curr = e.Key;
 		//JoystickButton也是有disselected,在JoystickButton处理
@@ -434,6 +478,15 @@ public class JoystickUIManager : MonoBehaviour {
 			//c = (KeyCode)System.Enum.Parse (typeof(KeyCode), script.keySrc);
 			//key = script.keySrc;
 			key = "F12";//F12无用，所以暂时用F12作为null返回值
+		}
+
+		if (key.Contains ("|")) {
+			string[] keys = key.Split('|');
+			if(keys.Length>1){
+				key = keys[1];
+			}
+		}else if(key.Contains("||")){
+			key = "F12";//遥感，同样无用
 		}
 		if (keycodeMapping.ContainsKey (key)) {
 			c = (KeyCode)System.Enum.Parse (typeof(KeyCode), keycodeMapping [key]);
@@ -629,6 +682,12 @@ public class JoystickUIManager : MonoBehaviour {
 		keycodeMapping.Add ("(", "LeftParen");
 		keycodeMapping.Add (")", "RightParen");
 
-	
+
+		keycodeMapping.Add ("JoystickButton0".ToUpper(), "JoystickButton0");
+		keycodeMapping.Add ("JoystickButton1".ToUpper(), "JoystickButton1");
+		keycodeMapping.Add ("JoystickButton2".ToUpper(), "JoystickButton2");
+		keycodeMapping.Add ("JoystickButton3".ToUpper(), "JoystickButton3");
+		//keycodeMapping.Add ("JoystickButton".ToUpper(), "JoystickButton1");
+
 	} 
 }
