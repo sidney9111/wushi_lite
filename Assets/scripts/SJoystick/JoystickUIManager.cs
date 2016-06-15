@@ -11,6 +11,7 @@ public class JoystickUIManager : MonoBehaviour {
 	/// model of touch or joystick
 	/// </summary>
 	private string model = "touch";
+	//private string model = "Joystick";
 	private static JoystickUIManager _instance;
 	public string Model{get{ return model;}}
 	private string[] availableKeys = {"A","W","S","D", //up,down,left,right 
@@ -87,17 +88,17 @@ public class JoystickUIManager : MonoBehaviour {
 					}
 					if(script.keySrc=="A"){
 						script.Text = "<";
-						script.keyDefine = "<||left";
+						script.keyDefine = "<xnfleft";
 					}else if(script.keySrc=="W"){
 						script.Text = "^";
-						script.keyDefine = "<||up";
+						script.keyDefine = "^xnfup";
 					}else if(script.keySrc=="D"){
 						script.Text = ">";
-						script.keyDefine = "<||right";
+						script.keyDefine = ">xnfright";
 					}
 					else if(script.keySrc=="S"){
 						script.Text=",";
-						script.keySrc=",||down";
+						script.keySrc=",xnfdown";
 					};
 				}
 			}
@@ -147,7 +148,7 @@ public class JoystickUIManager : MonoBehaviour {
 	void Update () {
 		
 		if (Input.anyKeyDown == true) {
-			print ("joystickuimanager anykey down");
+			//print ("joystickuimanager anykey down");
 			Canvas canvas = gameObject.GetComponent<Canvas>();
 			if (canvas.enabled == false) {
 				print ("test joystickuimanager canvas enabled == false, this value may control by programmer using show or hide function from script");
@@ -471,6 +472,13 @@ public class JoystickUIManager : MonoBehaviour {
 		JoystickButton script = t.GetComponent<JoystickButton> ();
 		KeyCode c;
 		string key = string.Empty; 
+		bool isLog = false;
+		if (key == "J") {
+			isLog = true;
+			Debug.Log("js manager parse j keyDefine="+script.keyDefine);
+			string[] keys = key.Split('|');
+			Debug.Log ("keys count" + keys.Length.ToString ());
+		}
 		if (string.IsNullOrEmpty (script.keyDefine) == false) {
 			//c = (KeyCode)System.Enum.Parse (typeof(KeyCode), script.keyDefine);
 			key = script.keyDefine;
@@ -484,13 +492,21 @@ public class JoystickUIManager : MonoBehaviour {
 			string[] keys = key.Split('|');
 			if(keys.Length>1){
 				key = keys[1];
+				Debug.Log ("key now " + key);
 			}
-		}else if(key.Contains("||")){
+		}else if(key.Contains("xnf")){
 			key = "F12";//遥感，同样无用
 		}
+
 		if (keycodeMapping.ContainsKey (key)) {
+			if (isLog) {
+				Debug.Log ("log key...................." + keycodeMapping [key]);
+			}
 			c = (KeyCode)System.Enum.Parse (typeof(KeyCode), keycodeMapping [key]);
 		} else {
+			if (isLog) {
+				Debug.Log ("log not...............");
+			}
 			c = (KeyCode)System.Enum.Parse (typeof(KeyCode), key);
 		}
 

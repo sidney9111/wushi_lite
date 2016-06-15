@@ -198,7 +198,10 @@ public class PlayerControls
 
 		STouch touch= new STouch();
 		if(touch.isTouchPlatForm==false||
-			JoystickUIManager.instance.Model=="Joystick"){
+			JoystickUIManager.instance.Model=="Joystick"
+			|| JoystickUIManager.instance.Model=="Touch"){
+			//android|ios 触摸框架，并且一开始model==""，会走另外下面的逻辑，
+			//无关于这里 JoystickUIManager.instance.Model=="Touch"
 
 			if (Input.touchCount>0){
 				Debug.Log ("PlayerControls handl touch tick return");
