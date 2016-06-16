@@ -10,10 +10,11 @@ public class JoystickUIManager : MonoBehaviour {
 	/// <summary>
 	/// model of touch or joystick
 	/// </summary>
-	private string model = "touch";
-	//private string model = "Joystick";
+	//private string model = "Normal";
+	private string _model = "Joystick";//Joystick && Normal
+
 	private static JoystickUIManager _instance;
-	public string Model{get{ return model;}}
+	public string Model{get{ return _model;}}
 	private string[] availableKeys = {"A","W","S","D", //up,down,left,right 
 	"J","K","L",//roll ,attack, hit, 3 type of wushi action
 	"JS","NOR"//joystick and normal mode
@@ -154,36 +155,38 @@ public class JoystickUIManager : MonoBehaviour {
 				print ("test joystickuimanager canvas enabled == false, this value may control by programmer using show or hide function from script");
 				return;
 			}
-			if(Input.GetKeyDown(KeyCode.Joystick8Button4)){
-				//L
-				print("press l");
-				undoKeyButton();
-				return;
-			}
-			if(Input.GetKeyDown(KeyCode.JoystickButton4)
-				|| Input.GetKeyDown(KeyCode.LeftArrow)){//即使是leftarrow "Input.inputstring"还是null
-				//L
-				print("press 0l");
-				undoKeyButton();
-				return;
-			}
-			if (Input.GetKeyDown (KeyCode.Joystick8Button5)) {//暂时没有知道Joystick8是什么（JoystickButton5是普通的摇杆）
-				//R
-				print("press r");
-				doKeyButton();
-				return;
-			}
-			if (Input.GetKeyDown (KeyCode.JoystickButton5)
-				|| Input.GetKeyDown(KeyCode.RightArrow)) {//即使是rightarrow "Input.inputstring"还是null
-				//R
-				print("press 0r");
-				doKeyButton();
-				return;
-			}
-			if (Input.GetKeyDown (KeyCode.Tab)) {
-				doKeyButton ();
-				return;
-			}
+			//20160616 现在不需要通过LB,RB进行tab的操作，
+//			if(Input.GetKeyDown(KeyCode.Joystick8Button4)){
+//				//L
+//				print("press l");
+//				undoKeyButton();
+//				return;
+//			}
+//			if(Input.GetKeyDown(KeyCode.JoystickButton4)
+//				|| Input.GetKeyDown(KeyCode.LeftArrow)){//即使是leftarrow "Input.inputstring"还是null
+//				//L
+
+//				print("press 0l");
+//				undoKeyButton();
+//				return;
+//			}
+//			if (Input.GetKeyDown (KeyCode.Joystick8Button5)) {//暂时没有知道Joystick8是什么（JoystickButton5是普通的摇杆）
+//				//R
+//				print("press r");
+//				doKeyButton();
+//				return;
+//			}
+//			if (Input.GetKeyDown (KeyCode.JoystickButton5)
+//				|| Input.GetKeyDown(KeyCode.RightArrow)) {//即使是rightarrow "Input.inputstring"还是null
+//				//R
+//				print("press 0r");
+//				doKeyButton();
+//				return;
+//			}
+//			if (Input.GetKeyDown (KeyCode.Tab)) {
+//				doKeyButton ();
+//				return;
+//			}
 			if (Input.inputString == "%" || Input.inputString == "~"
 				|| Input.inputString == "{" || Input.inputString == "}") {
 				return;
@@ -198,6 +201,10 @@ public class JoystickUIManager : MonoBehaviour {
 				//script.keyHandler +=OnCustomerKeySelected;
 				if (script != null) {
 					string pressedString = this.pressedString;
+					//demo 设置，不能用8,9做按钮
+					if (pressedString=="?|JoystickButton8" || pressedString=="?|JoystickButton9"){
+						pressedString="";
+					}
 					if (string.IsNullOrEmpty (pressedString) == false) {//容易出错，要细心处理，只有不等于null的时候才触发
 						script.OnKeyDown (curr, pressedString.ToUpper ());
 
@@ -281,19 +288,42 @@ public class JoystickUIManager : MonoBehaviour {
 			} else if (Input.GetKeyDown (KeyCode.JoystickButton3)) {
 				print("joystick manager press y");
 				return "Y|JoystickButton3";
-			} else if(Input.GetKeyDown(KeyCode.JoystickButton5)){
+			} else if(Input.GetKeyDown(KeyCode.JoystickButton4)){
 				return "LT|JoystickButton4";
-			
+			} else if(Input.GetKeyDown(KeyCode.JoystickButton5)){
+				return "RB|JoystickButton5";
 			} else if(Input.GetKeyDown(KeyCode.JoystickButton6)){
 				return "RT|JoystickButton5";
-				
 			} else if(Input.GetKeyDown(KeyCode.JoystickButton7)){
 				return "LB|JoystickButton7";
 				
 			} else if(Input.GetKeyDown(KeyCode.JoystickButton8)){
-				return "RB|JoystickButton8";
+				return "?|JoystickButton8";
 				
-			} else {
+			} else if(Input.GetKeyDown(KeyCode.JoystickButton9)){
+				return "?|JoystickButton9";
+			} else if(Input.GetKeyDown(KeyCode.JoystickButton10)){
+				return "?|JoystickButton10";
+			}else if(Input.GetKeyDown(KeyCode.JoystickButton11)){
+				return "?|JoystickButton11";
+			}else if(Input.GetKeyDown(KeyCode.JoystickButton12)){
+				return "?|JoystickButton12";
+			}else if(Input.GetKeyDown(KeyCode.JoystickButton13)){
+				return "?|JoystickButton13";
+			}else if(Input.GetKeyDown(KeyCode.JoystickButton14)){
+				return "?|JoystickButton14";
+			}else if(Input.GetKeyDown(KeyCode.JoystickButton15)){
+				return "?|JoystickButton15";
+			}else if(Input.GetKeyDown(KeyCode.JoystickButton16)){
+				return "?|JoystickButton16";
+			}else if(Input.GetKeyDown(KeyCode.JoystickButton17)){
+				return "?|JoystickButton17";
+			}else if(Input.GetKeyDown(KeyCode.JoystickButton18)){
+				return "?|JoystickButton18";
+			}else if(Input.GetKeyDown(KeyCode.JoystickButton19)){//第一个joystick
+				return "?|JoystickButton19";
+			}
+			else {
 
 
 				//				if(string.IsNullOrEmpty(Input.inputString)){
@@ -404,7 +434,7 @@ public class JoystickUIManager : MonoBehaviour {
 		print ("manager cur key = " + curr);
 	}
 	public void OnRadioSelected(object sender,JoystickRadio.RadioEventArgs e){
-		model = e.Key;
+		_model = e.Key;
 		//JoystickRadio有disselected，在这里处理
 		for(int i=0;i<gameObject.transform.childCount;i++){
 			Transform tran = gameObject.transform.GetChild (i);
@@ -703,6 +733,23 @@ public class JoystickUIManager : MonoBehaviour {
 		keycodeMapping.Add ("JoystickButton1".ToUpper(), "JoystickButton1");
 		keycodeMapping.Add ("JoystickButton2".ToUpper(), "JoystickButton2");
 		keycodeMapping.Add ("JoystickButton3".ToUpper(), "JoystickButton3");
+		keycodeMapping.Add ("JoystickButton4".ToUpper(), "JoystickButton4");
+		keycodeMapping.Add ("JoystickButton5".ToUpper(), "JoystickButton5");
+		keycodeMapping.Add ("JoystickButton6".ToUpper(), "JoystickButton6");
+		keycodeMapping.Add ("JoystickButton7".ToUpper(), "JoystickButton7");
+		keycodeMapping.Add ("JoystickButton8".ToUpper(), "JoystickButton8");
+		keycodeMapping.Add ("JoystickButton9".ToUpper(), "JoystickButton9");
+		keycodeMapping.Add ("JoystickButton10".ToUpper(), "JoystickButton10");
+		keycodeMapping.Add ("JoystickButton11".ToUpper(), "JoystickButton11");
+		keycodeMapping.Add ("JoystickButton12".ToUpper(), "JoystickButton12");
+		keycodeMapping.Add ("JoystickButton13".ToUpper(), "JoystickButton13");
+		keycodeMapping.Add ("JoystickButton14".ToUpper(), "JoystickButton14");
+		keycodeMapping.Add ("JoystickButton15".ToUpper(), "JoystickButton15");
+		keycodeMapping.Add ("JoystickButton16".ToUpper(), "JoystickButton16");
+		keycodeMapping.Add ("JoystickButton17".ToUpper(), "JoystickButton17");
+		keycodeMapping.Add ("JoystickButton18".ToUpper(), "JoystickButton18");
+		keycodeMapping.Add ("JoystickButton19".ToUpper(), "JoystickButton19");
+
 		//keycodeMapping.Add ("JoystickButton".ToUpper(), "JoystickButton1");
 
 	} 

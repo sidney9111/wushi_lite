@@ -4,7 +4,7 @@ using System;
 using SControls;
 public class IngameMenu
 {
-    enum E_State
+    public enum E_State
     {
         IngameMenu,
         Controls
@@ -19,8 +19,13 @@ public class IngameMenu
 
     private GuiManager GuiManager;
     private SpriteUI DefaultSpriteUI;
-    private bool IsOn;
-    private E_State State;
+    public bool IsOn;
+		private E_State _state;
+		public E_State State{
+			get{
+				return _state;
+			}
+		}
     private bool ButtonSelected = false;
     private bool JoystickSelected = false;
 
@@ -46,22 +51,22 @@ public class IngameMenu
     }
 
     public void Show()
-	{
+		{
         if (IsOn)
             return;
 
-        State = E_State.IngameMenu;
+        _state = E_State.IngameMenu;
 
         IsOn = true;
 
-		Game.Instance.GameState = E_GameState.IngameMenu;
-        Player.Instance.StopMove(true);
-		if(GuiManager==null)
-		{
-			return;
-		}
+				Game.Instance.GameState = E_GameState.IngameMenu;
+			      Player.Instance.StopMove(true);
+				if(GuiManager==null)
+				{
+					return;
+				}
         GuiManager.StartCoroutine(_Show());
-	}
+		}
 
     IEnumerator _Show()
     {
@@ -123,7 +128,7 @@ public class IngameMenu
 
     void ShowControls()
     {
-        State = E_State.Controls;
+        _state = E_State.Controls;
 
         GuiManager.Instance.SetFadeOut(0);
 
@@ -142,9 +147,9 @@ public class IngameMenu
         JoystickSelected = false;
     }
 
-    void HideControls(bool save)
+    public void HideControls(bool save)
     {
-        State = E_State.IngameMenu;
+        _state = E_State.IngameMenu;
 
         GuiManager.SetFadeOut(0.7f);
 
@@ -226,13 +231,13 @@ public class IngameMenu
                 if (touch.position.x > GuiInGameMenu.CScreenLeft && touch.position.x < GuiInGameMenu.CScreenLeft + GuiInGameMenu.CScreenWidth &&
                    touch.position.y > GuiInGameMenu.CScreenBottom && touch.position.y < GuiInGameMenu.CScreenBottom + GuiInGameMenu.CScreenHeight)
                 {// CONTROLS
-					GuiManager.Instance.PlayWarningSound();
+										GuiManager.Instance.PlayWarningSound();
                     //GuiManager.Instance.PlayButtonSound();
                     ShowControls();
 
-					if(JoystickUIManager.instance.isNew==false){
-						JoystickUIManager.instance.Show();
-					}
+										if(JoystickUIManager.instance.isNew==false){
+											JoystickUIManager.instance.Show();
+										}
                 }
                 else if (touch.position.x > GuiInGameMenu.RScreenLeft && touch.position.x < GuiInGameMenu.RScreenLeft + GuiInGameMenu.RScreenWidth &&
                     touch.position.y > GuiInGameMenu.RScreenBottom && touch.position.y < GuiInGameMenu.RScreenBottom + GuiInGameMenu.RScreenHeight)
@@ -245,7 +250,7 @@ public class IngameMenu
                 {
                     GuiManager.Instance.PlayButtonSound();
                     //Quit();
-					GuiManager.StartCoroutine(ApplicationQuit());
+									GuiManager.StartCoroutine(ApplicationQuit());
                 }
             }
         }
@@ -258,9 +263,9 @@ public class IngameMenu
                 {// SAVE
                     GuiManager.Instance.PlayButtonSound();
                     HideControls(true);
-					if(JoystickUIManager.instance.isNew==false){
-						JoystickUIManager.instance.Hide();
-					}
+										if(JoystickUIManager.instance.isNew==false){
+											JoystickUIManager.instance.Hide();
+										}
                 }
                 else if (touch.position.x > GuiInGameMenu.CCScreenLeft && touch.position.x < GuiInGameMenu.CCScreenLeft + GuiInGameMenu.CCScreenWidth &&
                    touch.position.y > GuiInGameMenu.CCScreenBottom - GuiInGameMenu.CCScreenHeight && touch.position.y < GuiInGameMenu.CCScreenBottom + GuiInGameMenu.CCScreenHeight * 2)

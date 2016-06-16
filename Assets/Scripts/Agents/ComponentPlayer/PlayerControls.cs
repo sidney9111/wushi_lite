@@ -15,7 +15,10 @@ public class PlayerControls
         Down,
         Cancel
     }
-
+		/**
+		 * UI里所有可允许的按键
+		 * 例如，圆圈按钮 | 正方按钮 | 三角按钮 | 商城键 | 菜单键 等等
+		*/
     public enum E_ButtonsName
     {
         None = -1,
@@ -39,7 +42,9 @@ public class PlayerControls
         ShopInfoBack,
         Max
     }
-
+		/**
+		 虚拟按键
+		*/
     public class Button
     {
         public int FingerId = -1;
@@ -78,7 +83,9 @@ public class PlayerControls
             return false;
         }
     }
-
+		/**
+		 虚拟摇杆
+		*/
     public class JoystickControl
     {
         public int FingerID = -1;
@@ -103,7 +110,8 @@ public class PlayerControls
     public JoystickControl Joystick = null;
 
     Transform MainCameraTransfom;
-
+		//判断摇杆是否activity
+		private bool isBluetoothBegan;
     public void Start()
     {
         GameObject t = new GameObject();
@@ -174,93 +182,119 @@ public class PlayerControls
 //		}
 	//	}
 	}
-    public void Update()
-    {
+	public bool isBackClick(){
+		if (Input.GetKeyDown (KeyCode.JoystickButton8)
+		    || Input.GetKeyDown(KeyCode.JoystickButton9)){
+			//viaplay f2 home键 == JoystickButton8
+			//viaplay f2 menu键 == JoystickButton9
+			return true;
+
+			//viaplay f2 start键盘 == 确认
+		}
+		return false;
+	}
+
+  public void Update()
+  {
 		//add this check to delete Mission on construct
 		if (Buttons == null) {
 			return;
 		}
-        for (int i = 0; i < Buttons.Length; i++)
-        {
-            if (Buttons[i].Status == E_ButtonStatus.UpFirst)
-                Buttons[i].Status = E_ButtonStatus.Up;
-            else if (Buttons[i].Status == E_ButtonStatus.DownFirst)
-                Buttons[i].Status = E_ButtonStatus.Down;
+    for (int i = 0; i < Buttons.Length; i++)
+    {
+        if (Buttons[i].Status == E_ButtonStatus.UpFirst)
+            Buttons[i].Status = E_ButtonStatus.Up;
+        else if (Buttons[i].Status == E_ButtonStatus.DownFirst)
+            Buttons[i].Status = E_ButtonStatus.Down;
 
-            if ( i < (int)E_ButtonsName.Shop && Buttons[i].PressTime != -1 && Time.timeSinceLevelLoad - Buttons[i].PressTime > 0.1f)
-            {
-                Buttons[i].Status = E_ButtonStatus.UpFirst;
-                Buttons[i].FingerId = -1;
-                Buttons[i].PressTime = -1;
-                GuiManager.Instance.ButtonUp((E_ButtonsName)i);
-            }
+        if ( i < (int)E_ButtonsName.Shop && Buttons[i].PressTime != -1 && Time.timeSinceLevelLoad - Buttons[i].PressTime > 0.1f)
+        {
+            Buttons[i].Status = E_ButtonStatus.UpFirst;
+            Buttons[i].FingerId = -1;
+            Buttons[i].PressTime = -1;
+            GuiManager.Instance.ButtonUp((E_ButtonsName)i);
         }
+    }
 
 		STouch touch= new STouch();
-		if(touch.isTouchPlatForm==false||
-			JoystickUIManager.instance.Model=="Joystick"
-			|| JoystickUIManager.instance.Model=="Touch"){
+//		if(touch.isTouchPlatForm==false||
+//			JoystickUIManager.instance.Model=="Joystick"){
+		if (JoystickUIManager.instance.Model != "Normal") {
+			Debug.Log ("joystick model="+JoystickUIManager.instance.Model);
+			//响应键盘----------------------------------------------------------------------------------------------
 			//android|ios 触摸框架，并且一开始model==""，会走另外下面的逻辑，
 			//无关于这里 JoystickUIManager.instance.Model=="Touch"
 
-			if (Input.touchCount>0){
-				Debug.Log ("PlayerControls handl touch tick return");
+			if (this.isBackClick () == true) {
+				if (GuiManager.Instance.isIngameMenuControlsOn == true) {
+					GuiManager.Instance.PlayButtonSound ();
+					GuiManager.Instance.HideIngameMenuControls ();
+				} else {
+					if (GuiManager.Instance.isIngameMenuOn == true) {
+						GuiManager.Instance.PlayButtonSound ();
+						GuiManager.Instance.HideIngameMenu ();
+					} else {
+						GuiManager.Instance.PlayWarningSound ();
+						GuiManager.Instance.ShowIngameMenu ();
+					}
+				}
 				return;
 			}
+//			if (Input.touchCount>0){
+//				Debug.Log ("PlayerControls handl touch tick return");
+//				return;
+//			}
 			if (Input.anyKeyDown) {//手点击也会any key down
 				Debug.Log ("touchplatform false");
 			}
+		
 			//Debug.Log ("joystick tick");
-			SDirection direction = m_touchmgr.buttonParseCombo();
+			SDirection direction = m_touchmgr.buttonParseCombo ();
 
 			KeyCode codeA = JoystickUIManager.instance.parse (KeyCode.A);
 			KeyCode codeD = JoystickUIManager.instance.parse (KeyCode.D);
 			KeyCode codeW = JoystickUIManager.instance.parse (KeyCode.W);
 			KeyCode codeS = JoystickUIManager.instance.parse (KeyCode.S);
-			m_touchmgr.Update(codeA,codeW,codeD,codeS);//have to be validate, not handle by current version
-			if(Input.GetKeyDown(codeA)){
-				touch.Direction=SDirection.left;
-				TouchBegin(touch);
-			}else if (Input.GetKeyDown(codeD)){
+			m_touchmgr.Update (codeA, codeW, codeD, codeS);//have to be validate, not handle by current version
+			if (Input.GetKeyDown (codeA)) {
+				touch.Direction = SDirection.left;
+				TouchBegin (touch);
+			} else if (Input.GetKeyDown (codeD)) {
 				touch.Direction = SDirection.right;
-				TouchBegin(touch);
-			}
-			else if(Input.GetKeyDown(codeW)){
+				TouchBegin (touch);
+			} else if (Input.GetKeyDown (codeW)) {
 				touch.Direction = SDirection.top;
-				TouchBegin(touch);
-			}
-			else if(Input.GetKeyDown(codeS)){
+				TouchBegin (touch);
+			} else if (Input.GetKeyDown (codeS)) {
 				touch.Direction = SDirection.bottom;
-				TouchBegin(touch);
+				TouchBegin (touch);
 			}
 
 			KeyCode codeJ = JoystickUIManager.instance.parse (KeyCode.J);
 			KeyCode codeK = JoystickUIManager.instance.parse (KeyCode.K);
 			KeyCode codeL = JoystickUIManager.instance.parse (KeyCode.L);
-			if(Input.GetKeyDown(codeJ)){
+			if (Input.GetKeyDown (codeJ)) {
 				//Debug.Log("get key down j");
-				STouch t2=new STouch();
-				t2.fingerId =2;
+				STouch t2 = new STouch ();
+				t2.fingerId = 2;
 				t2.phase = TouchPhase.Ended;
 
-				t2.position = Buttons[(int)E_ButtonsName.Roll].Center;
-				TouchBegin(t2);
-			}
-			else if(Input.GetKeyDown(codeK)){
-				STouch t2=new STouch();
-				t2.fingerId =2;
+				t2.position = Buttons [(int)E_ButtonsName.Roll].Center;
+				TouchBegin (t2);
+			} else if (Input.GetKeyDown (codeK)) {
+				STouch t2 = new STouch ();
+				t2.fingerId = 2;
 				t2.phase = TouchPhase.Began;
 				//t2.position = new Vector2(1039,151);
-				t2.position = Buttons[(int)E_ButtonsName.AttackO].Center;
-				TouchBegin(t2);
-			}
-			else if(Input.GetKeyDown(codeL)){
-				STouch t2=new STouch();
-				t2.fingerId =2;
+				t2.position = Buttons [(int)E_ButtonsName.AttackO].Center;
+				TouchBegin (t2);
+			} else if (Input.GetKeyDown (codeL)) {
+				STouch t2 = new STouch ();
+				t2.fingerId = 2;
 				t2.phase = TouchPhase.Began;
 				//t2.position = new Vector2(1137,231);
-				t2.position = Buttons[(int)E_ButtonsName.AttackX].Center;
-				TouchBegin(t2);
+				t2.position = Buttons [(int)E_ButtonsName.AttackX].Center;
+				TouchBegin (t2);
 			}
 
 //			if(Input.GetKey(KeyCode.A)){
@@ -276,46 +310,77 @@ public class PlayerControls
 //				touch.Direction=SDirection.bottom;
 //				TouchUpdate(touch);
 //			}
-			if(Input.GetKey(codeA) || Input.GetKey(codeW) || Input.GetKey(codeD) || Input.GetKey(codeS)){
+			if (Input.GetKey (codeA) || Input.GetKey (codeW) || Input.GetKey (codeD) || Input.GetKey (codeS)) {
 				touch.center = Joystick.Center;
 				touch.Direction = direction;
-				TouchUpdate(touch);
+				TouchUpdate (touch);
 			}
 
-			if(Input.GetKeyUp(codeA)){
-				touch.Direction=SDirection.left;
-				TouchEnd(touch);
-			}else if(Input.GetKeyUp(codeW)){
-				touch.Direction=SDirection.top;
-				TouchEnd(touch);
-			}else if(Input.GetKeyUp(codeD)){
-				touch.Direction=SDirection.right;
-				TouchEnd(touch);
-			}else if(Input.GetKeyUp(codeS)){
-				touch.Direction=SDirection.bottom;
-				TouchEnd(touch);
+			if (Input.GetKeyUp (codeA)) {
+				touch.Direction = SDirection.left;
+				TouchEnd (touch);
+			} else if (Input.GetKeyUp (codeW)) {
+				touch.Direction = SDirection.top;
+				TouchEnd (touch);
+			} else if (Input.GetKeyUp (codeD)) {
+				touch.Direction = SDirection.right;
+				TouchEnd (touch);
+			} else if (Input.GetKeyUp (codeS)) {
+				touch.Direction = SDirection.bottom;
+				TouchEnd (touch);
 			}
-			if(Input.GetMouseButtonDown(0)){
-				//Debug.Log(string.Format("GetMouseButtonDown getkeya{0}",Input.GetKey(KeyCode.A)));
-				//Debug.Log(string.Format("x|y {0}|{1}",Input.mousePosition.x,Input.mousePosition.y));
-				STouch t2= new STouch();
-				t2.fingerId = 2;
-				t2.phase = TouchPhase.Began;
-				t2.position = new Vector2(Input.mousePosition.x,Input.mousePosition.y);
-				TouchBegin(t2);
-			}else if(Input.GetMouseButtonUp(0)){
-				STouch t2=new STouch();
-				t2.fingerId =2;
-				t2.phase = TouchPhase.Ended;
-				t2.position=new Vector2(Input.mousePosition.x,Input.mousePosition.y);
-				TouchEnd(t2);
-			}
-		} else {
+
+		
+			//响应遥感方向键
 			float horizontal = Input.GetAxis ("Horizontal");
 			float vertical = Input.GetAxis ("Vertical");
-			if(horizontal != 0 || vertical!=0){
+			if (horizontal != 0 || vertical != 0) {
 				Debug.Log ("bluetooth h=" + horizontal + "|v=" + vertical);
+			
+				touch.position = new Vector2 (Joystick.Center.x + horizontal * 50, Joystick.Center.y + vertical * 50);
+				touch.fingerId = 1;
+				if (isBluetoothBegan = false) {
+					isBluetoothBegan = true;
+					touch.phase = TouchPhase.Began;
+					TouchBegin (touch);
+				} else {
+					touch.phase = TouchPhase.Moved;
+					TouchUpdate (touch);
+				}
+				//if(Input.get
+
+			} else {
+				isBluetoothBegan = false;
+				if (Joystick.On == true && Joystick.FingerID == 1) {
+					Debug.Log ("PlayerControls testing axis off touchend...");
+					touch.position = Joystick.Center;
+					touch.fingerId = 1;
+					touch.phase = TouchPhase.Ended;
+					TouchEnd (touch);
+				}
 			}
+
+		}//end of JoystickUIManager.instance.Model != "Touch"
+		//} else {
+		//响应Mouse------------------------------------------------------------------------------
+		if (Input.GetMouseButtonDown (0)) {
+			//Debug.Log(string.Format("GetMouseButtonDown getkeya{0}",Input.GetKey(KeyCode.A)));
+			//Debug.Log(string.Format("x|y {0}|{1}",Input.mousePosition.x,Input.mousePosition.y));
+			STouch t2 = new STouch ();
+			t2.fingerId = 2;
+			t2.phase = TouchPhase.Began;
+			t2.position = new Vector2 (Input.mousePosition.x, Input.mousePosition.y);
+			TouchBegin (t2);
+		} else if (Input.GetMouseButtonUp (0)) {
+			STouch t2 = new STouch ();
+			t2.fingerId = 2;
+			t2.phase = TouchPhase.Ended;
+			t2.position = new Vector2 (Input.mousePosition.x, Input.mousePosition.y);
+			TouchEnd (t2);
+		}
+
+		//响应touch--------------------------------------------------------------------------------------------------
+			
 			//测试用---------------------------------------------
 			if (Input.touchCount == 0)
 				return;
@@ -340,10 +405,15 @@ public class PlayerControls
 					TouchEnd(touch);
 				}
 			}
-		}
+		//}
 
    
     }
+		public void bluetoothAxisUpdate(STouch touch){
+			if (Joystick.On && Joystick.FingerID == -1) {
+				Joystick.FingerID = touch.fingerId;
+			}
+		}
     public void TouchBegin(STouch touch)
     {
         //Debug.Log("testing TouchBegin : " + touch.position);

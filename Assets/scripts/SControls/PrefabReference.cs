@@ -19,7 +19,7 @@ namespace SControls
 	//	
 	//	}
 	#if UNITY_EDITOR
-		[MenuItem("SControls/Check Prefab Use ?")]
+		//[MenuItem("SControls/Check Prefab Use ?")]
 		private static void OnSearchForReferences()
 		{
 			//确保鼠标右键选择的是一个Prefab
@@ -67,7 +67,7 @@ namespace SControls
 			return path;
 		}
 
-		[MenuItem ("SControls/Scane assets")]
+		//[MenuItem ("SControls/Scane assets")]
 		private static void ScaneAssetsSub(){
 			//List<string> strs = GetObjectNameToArray<string>("Assets/_Prefabs","meta");
 			List<string> strs = GetObjectNameToArray<string>("","meta");

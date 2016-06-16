@@ -45,7 +45,13 @@ namespace SControls
 		public Vector2 position;
 		public Vector2 deltaPosition;
 		public Vector2 center;
+		/// <summary>
+		/// 虚拟Jostick要通过fingerId判断多点触摸（非SJoystick）
+		/// </summary>
 		public int fingerId;
+		/// <summary>
+		/// touch 状态，Began|Moved\Ended
+		/// </summary>
 		public TouchPhase phase;
 		/// <summary>
 		/// return ture if andorid,ios,wp8
