@@ -220,7 +220,7 @@ public class PlayerControls
 //		if(touch.isTouchPlatForm==false||
 //			JoystickUIManager.instance.Model=="Joystick"){
 		if (JoystickUIManager.instance.Model != "Normal") {
-			Debug.Log ("joystick model="+JoystickUIManager.instance.Model);
+			//Debug.Log ("joystick model="+JoystickUIManager.instance.Model);
 			//响应键盘----------------------------------------------------------------------------------------------
 			//android|ios 触摸框架，并且一开始model==""，会走另外下面的逻辑，
 			//无关于这里 JoystickUIManager.instance.Model=="Touch"
@@ -362,24 +362,31 @@ public class PlayerControls
 
 		}//end of JoystickUIManager.instance.Model != "Touch"
 		//} else {
-		//响应Mouse------------------------------------------------------------------------------
-		if (Input.GetMouseButtonDown (0)) {
-			//Debug.Log(string.Format("GetMouseButtonDown getkeya{0}",Input.GetKey(KeyCode.A)));
-			//Debug.Log(string.Format("x|y {0}|{1}",Input.mousePosition.x,Input.mousePosition.y));
-			STouch t2 = new STouch ();
-			t2.fingerId = 2;
-			t2.phase = TouchPhase.Began;
-			t2.position = new Vector2 (Input.mousePosition.x, Input.mousePosition.y);
-			TouchBegin (t2);
-		} else if (Input.GetMouseButtonUp (0)) {
-			STouch t2 = new STouch ();
-			t2.fingerId = 2;
-			t2.phase = TouchPhase.Ended;
-			t2.position = new Vector2 (Input.mousePosition.x, Input.mousePosition.y);
-			TouchEnd (t2);
-		}
 
-		//响应touch--------------------------------------------------------------------------------------------------
+		//Input设置问题Mouse和Touch的响应会互相冲突
+		//所以不能并行
+		//具体原因没深究
+		if (touch.isTouchPlatForm == false) {
+			//响应Mouse------------------------------------------------------------------------------
+			if (Input.GetMouseButtonDown (0)) {
+				//Debug.Log(string.Format("GetMouseButtonDown getkeya{0}",Input.GetKey(KeyCode.A)));
+				//Debug.Log(string.Format("x|y {0}|{1}",Input.mousePosition.x,Input.mousePosition.y));
+				STouch t2 = new STouch ();
+				t2.fingerId = 2;
+				t2.phase = TouchPhase.Began;
+				t2.position = new Vector2 (Input.mousePosition.x, Input.mousePosition.y);
+				TouchBegin (t2);
+			} else if (Input.GetMouseButtonUp (0)) {
+				STouch t2 = new STouch ();
+				t2.fingerId = 2;
+				t2.phase = TouchPhase.Ended;
+				t2.position = new Vector2 (Input.mousePosition.x, Input.mousePosition.y);
+				TouchEnd (t2);
+			}
+		}
+		else
+		{
+			//响应touch--------------------------------------------------------------------------------------------------
 			
 			//测试用---------------------------------------------
 			if (Input.touchCount == 0)
@@ -406,6 +413,7 @@ public class PlayerControls
 				}
 			}
 		//}
+		}
 
    
     }
